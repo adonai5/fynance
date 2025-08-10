@@ -74,12 +74,17 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
         recurrence_type: debt.recurrence_type || 'monthly',
         selectedTags: []
       });
+    } else {
+      // Para novos registros, garantir que o status seja sempre 'pending'
+      setFormData(prev => ({ ...prev, status: 'pending' }));
     }
   }, [debt]);
 
   const handleTagsChange = (tags: string[]) => {
     setFormData({ ...formData, selectedTags: tags });
   };
+
+  const isEditing = !!debt;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -342,22 +347,25 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
               onTagsChange={handleTagsChange}
             />
 
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <Select 
-                value={formData.status} 
-                onValueChange={(value: 'pending' | 'paid' | 'overdue') => setFormData({ ...formData, status: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Pendente</SelectItem>
-                  <SelectItem value="paid">Paga</SelectItem>
-                  <SelectItem value="overdue">Em Atraso</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Mostrar seleção de status apenas quando estiver editando */}
+            {isEditing && (
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select 
+                  value={formData.status} 
+                  onValueChange={(value: 'pending' | 'paid' | 'overdue') => setFormData({ ...formData, status: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pendente</SelectItem>
+                    <SelectItem value="paid">Paga</SelectItem>
+                    <SelectItem value="overdue">Em Atraso</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-4">
               <div className="flex items-center space-x-2">

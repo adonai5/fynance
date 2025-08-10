@@ -33,6 +33,7 @@ const ReceivablePaymentForm: React.FC<ReceivablePaymentFormProps> = ({
     category_id: payment?.category_id || '',
     is_recurring: payment?.is_recurring || false,
     recurrence_type: payment?.recurrence_type || '',
+    status: payment?.status || 'pending', // Status sempre 'pending' para novos registros
   });
 
   // Filter income categories
@@ -51,6 +52,8 @@ const ReceivablePaymentForm: React.FC<ReceivablePaymentFormProps> = ({
     await handleSubmit(formData);
   };
 
+  const isEditing = !!payment;
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -67,6 +70,7 @@ const ReceivablePaymentForm: React.FC<ReceivablePaymentFormProps> = ({
               setFormData={setFormData}
               accounts={accounts || []}
               incomeCategories={incomeCategories}
+              isEditing={isEditing}
             />
 
             <div className="flex gap-2 pt-4">
