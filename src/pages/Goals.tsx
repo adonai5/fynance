@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import AppLayout from "@/components/shared/AppLayout";
 import GoalList from "@/components/goals/GoalList";
 import GoalForm from "@/components/goals/GoalForm";
 import GoalProgress from "@/components/goals/GoalProgress";
@@ -41,22 +40,20 @@ const Goals = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-1">Metas</h1>
-            <p className="text-muted-foreground">Crie e acompanhe suas metas financeiras</p>
-          </div>
-          
-          <GoalForm />
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Metas</h1>
+          <p className="text-muted-foreground">Crie e acompanhe suas metas financeiras</p>
         </div>
         
-        <GoalProgress goals={goals} onAddProgress={handleAddProgress} />
-        
-        <div className="mt-8">
-          <GoalList />
-        </div>
+        <GoalForm />
+      </div>
+      
+      <GoalProgress goals={goals} onAddProgress={handleAddProgress} />
+      
+      <div className="mt-8">
+        <GoalList />
       </div>
 
       <Dialog open={showTransactionForm} onOpenChange={setShowTransactionForm}>
@@ -71,7 +68,7 @@ const Goals = () => {
           />
         </DialogContent>
       </Dialog>
-    </AppLayout>
+    </div>
   );
 };
 

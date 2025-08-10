@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import AppLayout from "@/components/shared/AppLayout";
 import FinancialSummary from "@/components/dashboard/FinancialSummary";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import ExpensePieChart from "@/components/dashboard/ExpensePieChart";
@@ -50,55 +49,53 @@ const Dashboard = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-1">Dashboard</h1>
-            <p className="text-muted-foreground">Visão geral das suas finanças</p>
-          </div>
-          <div className="flex gap-4">
-            <DashboardFilters
-              selectedPeriod={selectedPeriod}
-              onPeriodChange={setSelectedPeriod}
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
-            />
-          </div>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Dashboard</h1>
+          <p className="text-muted-foreground">Visão geral das suas finanças</p>
         </div>
-
-        {/* Financial Summary - sempre visível, mas com widgets internos configuráveis */}
-        {isWidgetVisible('financial-summary') && (
-          <FinancialSummary hiddenWidgets={getHiddenFinancialSummaryWidgets()} />
-        )}
-
-        {/* Charts Row */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {isWidgetVisible('expense-chart') && <ExpensePieChart />}
-          {isWidgetVisible('income-chart') && <IncomePieChart />}
+        <div className="flex gap-4">
+          <DashboardFilters
+            selectedPeriod={selectedPeriod}
+            onPeriodChange={setSelectedPeriod}
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
+          />
         </div>
-
-        {/* Progress and Goals Row */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {isWidgetVisible('budget-progress') && <BudgetProgress />}
-          {isWidgetVisible('goal-tracker') && <GoalTracker />}
-        </div>
-
-        {/* Card Overview */}
-        {isWidgetVisible('card-overview') && (
-          <div className="grid gap-6 md:grid-cols-1">
-            <CardOverviewWidget />
-          </div>
-        )}
-        
-        {/* Recent Transactions */}
-        {isWidgetVisible('recent-transactions') && (
-          <div className="grid gap-6 md:grid-cols-1">
-            <RecentTransactions />
-          </div>
-        )}
       </div>
-    </AppLayout>
+
+      {/* Financial Summary - sempre visível, mas com widgets internos configuráveis */}
+      {isWidgetVisible('financial-summary') && (
+        <FinancialSummary hiddenWidgets={getHiddenFinancialSummaryWidgets()} />
+      )}
+
+      {/* Charts Row */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {isWidgetVisible('expense-chart') && <ExpensePieChart />}
+        {isWidgetVisible('income-chart') && <IncomePieChart />}
+      </div>
+
+      {/* Progress and Goals Row */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {isWidgetVisible('budget-progress') && <BudgetProgress />}
+        {isWidgetVisible('goal-tracker') && <GoalTracker />}
+      </div>
+
+      {/* Card Overview */}
+      {isWidgetVisible('card-overview') && (
+        <div className="grid gap-6 md:grid-cols-1">
+          <CardOverviewWidget />
+        </div>
+      )}
+      
+      {/* Recent Transactions */}
+      {isWidgetVisible('recent-transactions') && (
+        <div className="grid gap-6 md:grid-cols-1">
+          <RecentTransactions />
+        </div>
+      )}
+    </div>
   );
 };
 
