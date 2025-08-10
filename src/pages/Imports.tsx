@@ -2,11 +2,35 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import AppLayout from "@/components/shared/AppLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import { Receipt, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Upload, FileText, CreditCard, PiggyBank } from "lucide-react";
 import OFXImporter from "@/components/shared/OFXImporter";
+
+const importOptions = [
+  {
+    id: "transactions",
+    title: "Transações",
+    description: "Importar transações via arquivo OFX",
+    icon: FileText,
+    color: "from-blue-500 to-blue-600"
+  },
+  {
+    id: "cards",
+    title: "Cartões",
+    description: "Importar dados de cartões de crédito",
+    icon: CreditCard,
+    color: "from-green-500 to-green-600",
+    disabled: true
+  },
+  {
+    id: "investments",
+    title: "Investimentos",
+    description: "Importar dados de investimentos",
+    icon: PiggyBank,
+    color: "from-purple-500 to-purple-600",
+    disabled: true
+  }
+];
 
 const Imports = () => {
   const { isAuthenticated } = useAuth();
@@ -19,92 +43,76 @@ const Imports = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const importOptions = [
-    {
-      id: 'transactions',
-      title: 'Transações',
-      description: 'Importar transações bancárias via arquivo OFX',
-      icon: Receipt,
-      color: 'from-blue-500 to-cyan-500'
-    }
-  ];
-
-  const handleSelectImport = (importId: string) => {
+  const handleImportSelect = (importId: string) => {
     setSelectedImport(importId);
   };
 
-  const handleBackToGrid = () => {
+  const handleBackToOptions = () => {
     setSelectedImport(null);
   };
 
-  if (selectedImport === 'transactions') {
+  if (selectedImport === "transactions") {
     return (
-      <AppLayout>
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleBackToGrid}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-1">Importar Transações</h1>
-              <p className="text-muted-foreground">Importe suas transações bancárias via arquivo OFX</p>
-            </div>
-          </div>
-
-          <div className="flex justify-center">
-            <OFXImporter />
-          </div>
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleBackToOptions}
+            className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-2"
+          >
+            ← Voltar para importações
+          </button>
         </div>
-      </AppLayout>
+        
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Importar Transações</h1>
+          <p className="text-muted-foreground">Importe suas transações através de arquivos OFX</p>
+        </div>
+        
+        <OFXImporter />
+      </div>
     );
   }
 
   return (
-    <AppLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-1">Importações</h1>
-            <p className="text-muted-foreground">Importe dados de diferentes fontes para o sistema</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {importOptions.map((option) => {
-            const IconComponent = option.icon;
-            return (
-              <Card 
-                key={option.id}
-                className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] group border-2 hover:border-primary/20"
-                onClick={() => handleSelectImport(option.id)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className={`p-4 rounded-full bg-gradient-to-r ${option.color} text-white transition-transform duration-300 group-hover:scale-110`}>
-                      <IconComponent className="h-8 w-8" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                        {option.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {option.description}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground mb-1">Importações</h1>
+        <p className="text-muted-foreground">Importe dados de diferentes fontes para o seu sistema financeiro</p>
       </div>
-    </AppLayout>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {importOptions.map((option) => (
+          <Card
+            key={option.id}
+            className={`cursor-pointer transition-all duration-200 hover:shadow-lg border ${
+              option.disabled 
+                ? 'opacity-50 cursor-not-allowed bg-muted/50' 
+                : 'hover:border-primary/50 hover:shadow-primary/10'
+            }`}
+            onClick={() => !option.disabled && handleImportSelect(option.id)}
+          >
+            <CardHeader className="text-center pb-2">
+              <div className={`mx-auto w-12 h-12 rounded-lg bg-gradient-to-r ${option.color} flex items-center justify-center mb-4 ${
+                option.disabled ? 'grayscale' : ''
+              }`}>
+                <option.icon className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle className="text-lg">{option.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center pt-0">
+              <CardDescription className="text-sm">
+                {option.description}
+                {option.disabled && (
+                  <span className="block text-xs text-muted-foreground mt-2 italic">
+                    Em breve
+                  </span>
+                )}
+              </CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 };
 
