@@ -301,6 +301,11 @@ const DebtList: React.FC = () => {
     setShowForm(false);
   };
 
+  const handleEditDebt = (debt: any) => {
+    setSelectedDebt(debt);
+    setShowForm(true);
+  };
+
   const getAccountName = (accountId: string) => {
     const account = accounts.find(acc => acc.id === accountId);
     return account ? `${account.name} - ${account.bank || 'Sem banco'}` : 'Conta não encontrada';
@@ -494,7 +499,7 @@ const DebtList: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setSelectedDebt(debt)}
+                            onClick={() => handleEditDebt(debt)}
                             disabled={Object.values(loadingOperations).some(Boolean)}
                           >
                             <Edit className="h-4 w-4" />

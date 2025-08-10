@@ -49,7 +49,6 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
     description: '',
     amount: '',
     due_date: undefined as Date | undefined,
-    status: 'pending' as 'pending' | 'paid' | 'overdue',
     notes: '',
     account_id: '',
     category_id: '',
@@ -66,7 +65,6 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
         description: debt.description,
         amount: debt.amount.toString(),
         due_date: new Date(debt.due_date),
-        status: debt.status,
         notes: debt.notes || '',
         account_id: debt.account_id || '',
         category_id: debt.category_id || '',
@@ -74,17 +72,12 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
         recurrence_type: debt.recurrence_type || 'monthly',
         selectedTags: []
       });
-    } else {
-      // Para novos registros, garantir que o status seja sempre 'pending'
-      setFormData(prev => ({ ...prev, status: 'pending' }));
     }
   }, [debt]);
 
   const handleTagsChange = (tags: string[]) => {
     setFormData({ ...formData, selectedTags: tags });
   };
-
-  const isEditing = !!debt;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,8 +97,8 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
       return;
     }
 
-    // Validação de data de vencimento
-    if (formData.due_date && isBefore(formData.due_date, new Date())) {
+    // Validação de data de vencimento (remover para edição)
+    if (!debt && formData.due_date && isBefore(formData.due_date, new Date())) {
       toast({
         title: "Erro",
         description: "A data de vencimento deve ser futura",
@@ -147,9 +140,9 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
       const debtData = {
         user_id: user.id,
         description: formData.description,
-        amount: amount, // Usar o valor validado
+        amount: amount,
         due_date: format(formData.due_date, 'yyyy-MM-dd'),
-        status: formData.status,
+        status: 'pending', // Sempre 'pending' para novos e editados
         notes: formData.notes || null,
         account_id: formData.account_id || null,
         category_id: formData.category_id || null,
@@ -160,10 +153,15 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
       console.log('Debt data to be saved:', debtData);
 
       if (debt) {
-        // Update existing debt
+        // Update existing debt - manter o status atual se for 'paid'
+        const updateData = { ...debtData };
+        if (debt.status === 'paid') {
+          delete updateData.status; // Não alterar o status se já estiver pago
+        }
+        
         const { error } = await supabase
           .from('debts')
-          .update(debtData)
+          .update(updateData)
           .eq('id', debt.id);
 
         if (error) {
@@ -183,29 +181,6 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
         if (error) {
           console.error('Error creating debt:', error);
           throw error;
-        }
-
-        // If debt is created as paid, create a transaction
-        if (formData.status === 'paid' && formData.account_id) {
-          const transactionData = {
-            user_id: user.id,
-            description: `Pagamento: ${formData.description}`,
-            amount: -Math.abs(amount), // Usar o valor validado
-            type: 'expense',
-            date: format(formData.due_date, 'yyyy-MM-dd'),
-            account_id: formData.account_id,
-            category_id: formData.category_id || null
-          };
-
-          console.log('Creating transaction:', transactionData);
-
-          const { error: transactionError } = await supabase
-            .from('transactions')
-            .insert(transactionData);
-
-          if (transactionError) {
-            console.error('Error creating transaction:', transactionError);
-          }
         }
 
         toast({
@@ -346,26 +321,6 @@ const DebtForm = ({ debt, onClose, onSave }: DebtFormProps) => {
               selectedTags={formData.selectedTags}
               onTagsChange={handleTagsChange}
             />
-
-            {/* Mostrar seleção de status apenas quando estiver editando */}
-            {isEditing && (
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select 
-                  value={formData.status} 
-                  onValueChange={(value: 'pending' | 'paid' | 'overdue') => setFormData({ ...formData, status: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pendente</SelectItem>
-                    <SelectItem value="paid">Paga</SelectItem>
-                    <SelectItem value="overdue">Em Atraso</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
 
             <div className="space-y-4">
               <div className="flex items-center space-x-2">

@@ -132,26 +132,6 @@ const ReceivableFormFields: React.FC<ReceivableFormFieldsProps> = ({
         </Select>
       </div>
 
-      {/* Mostrar seleção de status apenas quando estiver editando */}
-      {isEditing && (
-        <div className="space-y-2">
-          <Label htmlFor="status">Status</Label>
-          <Select 
-            value={formData.status || 'pending'} 
-            onValueChange={(value) => setFormData({ ...formData, status: value })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="pending">Pendente</SelectItem>
-              <SelectItem value="received">Recebido</SelectItem>
-              <SelectItem value="overdue">Em Atraso</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
           <Switch
