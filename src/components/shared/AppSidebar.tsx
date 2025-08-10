@@ -13,7 +13,8 @@ import {
   HelpCircle, 
   FileText, 
   Bot, 
-  Shield 
+  Shield,
+  Upload
 } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
@@ -53,6 +54,10 @@ const navigationItems = [{
   title: 'Relatórios',
   icon: BarChart3,
   href: '/relatorios'
+}, {
+  title: 'Importações',
+  icon: Upload,
+  href: '/importacoes'
 }, {
   title: 'Calendário',
   icon: Calendar,

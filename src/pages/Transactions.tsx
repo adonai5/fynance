@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import AppLayout from "@/components/shared/AppLayout";
 import TransactionListAdvanced from "@/components/transactions/TransactionListAdvanced";
-import OFXImporter from "@/components/shared/OFXImporter";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Transactions = () => {
   const { isAuthenticated } = useAuth();
@@ -27,20 +25,7 @@ const Transactions = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="lista" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="lista">Lista de Transações</TabsTrigger>
-            <TabsTrigger value="importar">Importar OFX</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="lista">
-            <TransactionListAdvanced />
-          </TabsContent>
-          
-          <TabsContent value="importar" className="flex justify-center">
-            <OFXImporter />
-          </TabsContent>
-        </Tabs>
+        <TransactionListAdvanced />
       </div>
     </AppLayout>
   );

@@ -3,85 +3,68 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
+import { Layout } from "@/components/Layout";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
-import Cards from "./pages/Cards";
 import Accounts from "./pages/Accounts";
-import Categories from "./pages/Categories";
+import AccountsAndDebts from "./pages/AccountsAndDebts";
+import Cards from "./pages/Cards";
+import Control from "./pages/Control";
 import Budgets from "./pages/Budgets";
 import Goals from "./pages/Goals";
-import Settings from "./pages/Settings";
-import AccountsAndDebts from "./pages/AccountsAndDebts";
-import TagsDashboard from "./pages/TagsDashboard";
-import Calendar from "./pages/Calendar";
-import Login from "./pages/Login";
-import AIAssistantPage from "./pages/AIAssistant";
 import Reports from "./pages/Reports";
+import Imports from "./pages/Imports";
+import Calendar from "./pages/Calendar";
+import AIAssistant from "./pages/AIAssistant";
+import Settings from "./pages/Settings";
 import Help from "./pages/Help";
-import Control from "./pages/Control";
-import LandingPage from "@/landingpage/LandingPage";
-import { useAuth } from "@/hooks/useAuth";
+import NotFound from "./pages/NotFound";
+import TagsDashboard from "./pages/TagsDashboard";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-const AppRoutes = () => {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return null;
+function App() {
   return (
-    <Routes>
-      <Route path="/" element={isAuthenticated ? <Dashboard /> : <LandingPage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      {/* Rotas em português para corresponder à sidebar */}
-      <Route path="/transacoes" element={<Transactions />} />
-      <Route path="/contas-dividas" element={<AccountsAndDebts />} />
-      <Route path="/cartoes" element={<Cards />} />
-      <Route path="/contas" element={<Accounts />} />
-      <Route path="/controle" element={<Control />} />
-      <Route path="/orcamentos" element={<Budgets />} />
-      <Route path="/metas" element={<Goals />} />
-      <Route path="/relatorios" element={<Reports />} />
-      <Route path="/calendario" element={<Calendar />} />
-      <Route path="/assistente-ia" element={<AIAssistantPage />} />
-      <Route path="/configuracoes" element={<Settings />} />
-      <Route path="/ajuda" element={<Help />} />
-      {/* Manter rotas antigas em inglês para compatibilidade */}
-      <Route path="/transactions" element={<Transactions />} />
-      <Route path="/cards" element={<Cards />} />
-      <Route path="/accounts" element={<Accounts />} />
-      <Route path="/categories" element={<Categories />} />
-      <Route path="/budgets" element={<Budgets />} />
-      <Route path="/goals" element={<Goals />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/accounts-debts" element={<AccountsAndDebts />} />
-      <Route path="/tags" element={<TagsDashboard />} />
-      <Route path="/calendar" element={<Calendar />} />
-    </Routes>
-  );
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <AuthProvider>
-        <TooltipProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
           <Toaster />
           <Sonner />
-          <AppRoutes />
-        </TooltipProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </QueryClientProvider>
-);
+          <BrowserRouter>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              
+              {/* Protected Routes with Layout */}
+              <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+              <Route path="/transacoes" element={<Layout><Transactions /></Layout>} />
+              <Route path="/contas-dividas" element={<Layout><AccountsAndDebts /></Layout>} />
+              <Route path="/cartoes" element={<Layout><Cards /></Layout>} />
+              <Route path="/contas" element={<Layout><Accounts /></Layout>} />
+              <Route path="/controle" element={<Layout><Control /></Layout>} />
+              <Route path="/orcamentos" element={<Layout><Budgets /></Layout>} />
+              <Route path="/metas" element={<Layout><Goals /></Layout>} />
+              <Route path="/relatorios" element={<Layout><Reports /></Layout>} />
+              <Route path="/importacoes" element={<Layout><Imports /></Layout>} />
+              <Route path="/calendario" element={<Layout><Calendar /></Layout>} />
+              <Route path="/assistente-ia" element={<Layout><AIAssistant /></Layout>} />
+              <Route path="/configuracoes" element={<Layout><Settings /></Layout>} />
+              <Route path="/ajuda" element={<Layout><Help /></Layout>} />
+              <Route path="/tags" element={<Layout><TagsDashboard /></Layout>} />
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
